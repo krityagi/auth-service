@@ -1,0 +1,28 @@
+replicaCount: 1
+
+image:
+  repository: gcr.io/your-gcp-project-id/auth-service
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+mongoUri: "mongodb://mongo:27017/devopsduniya"
+
+env:
+  clientId: "your-client-id"
+  clientSecret: "your-client-secret"
+  refreshToken: "1//047kz0bIO2uj8CgYIARAAGAQSNwF-L9IrcZv7ZnheniYISYD_AUxe8Xa2N8anII0ebUcDBGJ-D_jnIu9ZWNTb5CDyzRSoj5QV5jA"
+
+livenessProbe:
+  path: /healthz
+  port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  path: /readiness
+  port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+service:
+  port: 80

@@ -1,0 +1,45 @@
+name: Deploy to GKE
+
+on:
+  repository_dispatch:
+    types: [jenkins_trigger]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          install_components: 'kubectl'
+
+      - name: Configure kubectl
+        run: |
+          gcloud container clusters get-credentials k8s-cluster --zone europe-west1-b --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Create mongo-secret
+        run: |
+          kubectl create secret generic mongo-secret \
+            --from-literal=MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} \
+            --from-literal=MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} \
+            --namespace devopsduniya-dev
+
+      - name: Deploy to GKE with Helm
+        if: github.event_name == 'repository_dispatch' && github.event.action == 'jenkins_trigger' && github.event.client_payload.tag != null
+        env:
+          IMAGE_TAG: ${{ github.event.client_payload.tag }}
+        run: |
+          helm upgrade --install devopsduniya-helm-app ./devopsduniya-helm-app --namespace devopsduniya-dev --set image.tag=${{ env.IMAGE_TAG }}
