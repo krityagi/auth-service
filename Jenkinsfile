@@ -42,6 +42,20 @@ pipeline {
             }
         }
 
+        stage('Test Docker Image') {
+            steps {
+                script {
+                    sh '''
+                    # Pull the image
+                    docker pull ${DOCKER_IMAGE}
+                    
+                    # Run tests using the Docker image
+                    docker run --rm ${DOCKER_IMAGE} npm test
+                    '''
+                }
+            }
+        }
+
         stage('Tag and Push') {
             steps {
                 withCredentials([string(credentialsId: 'GitHub_Token', variable: 'GITHUB_TOKEN')]) {
