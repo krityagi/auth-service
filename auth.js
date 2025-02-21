@@ -7,17 +7,15 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const authRoutes = require('./routes/auth').router; 
-const adminRoutes = require('./routes/admin'); 
+const authRoutes = require('./routes/authRoutes').router;
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// MongoDB connection string with authentication
-const MONGO_URI = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mongo:27017/devopsduniya?authSource=admin`;
+const MONGO_URI = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mongo:27017/authService?authSource=admin`;
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB connected'))
+    .then(() => console.log('MongoDB connected for Auth Service'))
     .catch(err => console.log('MongoDB connection error: ', err));
 
 app.set('view engine', 'ejs');
@@ -55,11 +53,9 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Home Page!');
 });
 
-app.use(authRoutes); // Use authRoutes directly without `.router`
-app.use('/admin', adminRoutes); // adminRoutes is already exporting the router
-
-console.log('Admin routes added'); 
+// Routes
+app.use(authRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}/login`);
+    console.log(`Auth Service is running on http://localhost:${port}/login`);
 });
