@@ -4,6 +4,7 @@ metadata:
   name: auth-service
   namespace: devopsduniya-dev
   type: LoadBalancer
+spec:
   ports:
     - port: 80
       targetPort: 3000

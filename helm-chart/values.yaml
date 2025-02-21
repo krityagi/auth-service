@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: gcr.io/your-gcp-project-id/auth-service
+  repository: gcr.io/devopsduniya/auth-service
   pullPolicy: IfNotPresent
   tag: "latest"
 
