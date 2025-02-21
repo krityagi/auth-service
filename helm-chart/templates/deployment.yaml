@@ -21,11 +21,20 @@ spec:
         - name: MONGO_URI
           value: {{ .Values.mongoUri }}
         - name: CLIENT_ID
-          value: {{ .Values.env.clientId }}
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: CLIENT_ID
         - name: CLIENT_SECRET
-          value: {{ .Values.env.clientSecret }}
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: CLIENT_SECRET
         - name: REFRESH_TOKEN
-          value: {{ .Values.env.refreshToken }}
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: REFRESH_TOKEN
         ports:
         - containerPort: 3000
         livenessProbe:

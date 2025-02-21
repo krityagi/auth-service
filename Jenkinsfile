@@ -69,7 +69,7 @@ pipeline {
             }
         }
 
-        /*stage('Trigger GitHub Actions') {
+        stage('Trigger GitHub Actions') {
             steps {
                 withCredentials([string(credentialsId: 'GitHub_Token', variable: 'GITHUB_TOKEN')]) {
                     script {
@@ -82,7 +82,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
     }
 
     post {

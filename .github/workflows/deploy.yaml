@@ -36,6 +36,13 @@ jobs:
             --from-literal=MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} \
             --from-literal=MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} \
             --namespace devopsduniya-dev
+      - name: Create app-secret
+        run: |
+          kubectl create secret generic app-secret \
+            --from-literal=CLIENT_ID=${{ secrets.APP_CLIENT_ID }} \
+            --from-literal=CLIENT_SECRET=${{ secrets.APP_CLIENT_SECRET }} \
+            --from-literal=REFRESH_TOKEN=${{ secrets.APP_REFRESH_TOKEN }} \
+            --namespace devopsduniya-dev
 
       - name: Deploy to GKE with Helm
         if: github.event_name == 'repository_dispatch' && github.event.action == 'jenkins_trigger' && github.event.client_payload.tag != null
