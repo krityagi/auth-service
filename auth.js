@@ -36,5 +36,5 @@ app.use(session({
 app.use(authRoutes);
 
 app.listen(port, () => {
-    console.log(`Auth Service is running on http://localhost:${port}`);
+    console.log(`Auth Service is running on http://localhost:${port}/login`);
 });
