@@ -18,23 +18,38 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-        - name: MONGO_URI
-          value: {{ .Values.mongoUri }}
-        - name: CLIENT_ID
+        - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
               name: app-secret
-              key: CLIENT_ID
-        - name: CLIENT_SECRET
+              key: DB_USERNAME
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: app-secret
-              key: CLIENT_SECRET
+              key: DB_PASSWORD
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: SESSION_SECRET
+        - name: EMAIL_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: EMAIL_USER
         - name: REFRESH_TOKEN
           valueFrom:
             secretKeyRef:
               name: app-secret
               key: REFRESH_TOKEN
+        - name: REDIRECT_URI
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: REDIRECT_URI
+        - name: MONGO_URI
+          value: "mongodb://${DB_USERNAME}:${DB_PASSWORD}@mongo:27017/authService?authSource=admin"
         ports:
         - containerPort: 3000
         livenessProbe:

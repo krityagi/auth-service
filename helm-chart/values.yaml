@@ -5,7 +5,7 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
-mongoUri: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongo:27017/devopsduniya"
+mongoUri: "mongodb://mongo:27017/devopsduniya"
 
 livenessProbe:
   path: /healthz
