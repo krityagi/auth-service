@@ -49,4 +49,4 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.event.client_payload.tag }}
         run: |
-          helm upgrade --install devopsduniya-helm-app ./devopsduniya-helm-app --namespace devopsduniya-dev --set image.tag=${{ env.IMAGE_TAG }}
+          helm upgrade --install devopsduniya-app ./helm-chart --namespace devopsduniya-dev --set image.tag=${{ env.IMAGE_TAG }}
