@@ -10,7 +10,7 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes').router;
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
 const MONGO_URI = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mongo:27017/authService?authSource=admin`;
 
