@@ -42,6 +42,11 @@ jobs:
             --from-literal=CLIENT_ID=${{ secrets.APP_CLIENT_ID }} \
             --from-literal=CLIENT_SECRET=${{ secrets.APP_CLIENT_SECRET }} \
             --from-literal=REFRESH_TOKEN=${{ secrets.APP_REFRESH_TOKEN }} \
+            --from-literal=DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            --from-literal=DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --from-literal=SESSION_SECRET=${{ secrets.SESSION_SECRET }} \
+            --from-literal=EMAIL_USER=${{ secrets.EMAIL_USER }} \
+            --from-literal=REDIRECT_URI=${{ secrets.REDIRECT_URI }} \
             --namespace devopsduniya-dev
 
       - name: Deploy to GKE with Helm
