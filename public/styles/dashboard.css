@@ -1,0 +1,64 @@
+/* Custom Navbar */
+.custom-navbar {
+    background-color: #2c3e50 !important; /* Darker shade for the navbar */
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add shadow for depth */
+}
+
+.navbar-brand, .nav-link, .form-inline button {
+    color: white !important;
+}
+
+body.light-mode {
+    background-color: #ecf0f1; /* Light background */
+    color: #2c3e50; /* Darker text */
+}
+
+body.dark-mode {
+    background-color: #2c3e50; /* Dark background for dark mode */
+    color: #ecf0f1; /* Light text for dark mode */
+}
+
+/* Custom Sidebar */
+.sidebar {
+    position: fixed;
+    top: 80px; /* Adjust according to the height of your navbar */
+    left: 0;
+    height: calc(100vh - 80px); /* Ensure sidebar height is correct */
+    padding-top: 20px;
+    background-color: #34495e; /* Darker sidebar background */
+    border-right: 1px solid #ddd;
+    z-index: 1000; /* Add a higher z-index */
+    color: #ecf0f1; /* Light text color */
+}
+
+.sidebar .nav-link {
+    color: #ecf0f1 !important; /* Light color for links */
+}
+
+.sidebar .nav-link:hover {
+    background-color: #2c3e50; /* Darker background on hover */
+    color: #ecf0f1 !important;
+}
+
+.sidebar .nav-link.active {
+    font-weight: bold;
+    background-color: #2c3e50; /* Darker background for active link */
+    color: #ecf0f1 !important;
+}
+
+/* Main Content */
+.main-content {
+    margin-top: 80px;
+    padding-left: 250px; /* Adjust according to the width of your sidebar */
+}
+
+main {
+    margin-top: 80px;
+    padding-left: 250px; /* Adjust according to the width of your sidebar */
+}
+
+main h2 {
+    margin-top: 20px;
+    color: #2c3e50; /* Use same darker text color */
+}
