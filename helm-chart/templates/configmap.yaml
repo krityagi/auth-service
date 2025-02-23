@@ -4,4 +4,4 @@ metadata:
   name: service-addresses
   namespace: devopsduniya-dev
 data:
-  DASHBOARD_SERVICE_URL: "http://dashboard-service:3000"
+  DASHBOARD_SERVICE_URL: "http://dashboard-service-internal:3000"
