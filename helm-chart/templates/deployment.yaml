@@ -48,6 +48,11 @@ spec:
             secretKeyRef:
               name: app-secret
               key: REDIRECT_URI
+        - name: DASHBOARD_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: service-addresses
+              key: DASHBOARD_SERVICE_URL
         - name: MONGO_URI
           value: "mongodb://${DB_USERNAME}:${DB_PASSWORD}@mongo:27017/authService?authSource=admin"
         ports:

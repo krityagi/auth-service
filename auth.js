@@ -56,6 +56,23 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Home Page!');
 });
 
+app.post('/login', async (req, res) => {
+    // Perform login logic here...
+
+    // Read the dashboard service URL from environment variables
+    const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:3000';
+
+    // After successful login, make a request to the dashboard-service
+    try {
+        const response = await axios.get(`${dashboardServiceUrl}/dashboard`);
+        console.log('Dashboard response:', response.data);
+        res.redirect('/dashboard');
+    } catch (error) {
+        console.error('Error calling dashboard-service:', error);
+        res.status(500).send('Internal Server Error');
+    
+    }
+});
 // Routes
 app.use(authRoutes);
 

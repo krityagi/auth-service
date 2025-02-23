@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-addresses
+  namespace: devopsduniya-dev
+data:
+  DASHBOARD_SERVICE_URL: "http://dashboard-service:3000"
