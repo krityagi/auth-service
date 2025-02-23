@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
+const axios = require('axios');
 
 require('dotenv').config();
 
@@ -78,11 +79,24 @@ router.post('/login', async (req, res) => {
         }
 
         req.session.user = user;
-        return res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
+
+        // Redirect to the dashboard after successful login
+        res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
+
+        // Call the dashboard-service
+        const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:3000';
+        try {
+            const response = await axios.get(`${dashboardServiceUrl}/dashboard`);
+            console.log('Dashboard response:', response.data);
+        } catch (error) {
+            console.error('Error calling dashboard-service:', error);
+        }
+
     } catch (err) {
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
+
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
