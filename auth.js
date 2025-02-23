@@ -13,7 +13,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 console.log('DB_USERNAME:', process.env.DB_USERNAME);
 console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
-
+console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
 const MONGO_URI = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mongo:27017/authService?authSource=admin`;
 
 
