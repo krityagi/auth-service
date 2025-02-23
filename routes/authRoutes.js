@@ -65,20 +65,25 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
+    console.log('Login request received:', req.body);
+
     const { email, password } = req.body;
 
     try {
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
+            console.log('Invalid credentials - user not found');
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
+            console.log('Invalid credentials - password mismatch');
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         req.session.user = user;
+        console.log('Login successful, redirecting to dashboard');
 
         // Redirect to the dashboard after successful login
         res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
@@ -93,9 +98,11 @@ router.post('/login', async (req, res) => {
         }
 
     } catch (err) {
+        console.error('Error during login:', err);
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
+
 
 
 router.get('/logout', (req, res) => {
