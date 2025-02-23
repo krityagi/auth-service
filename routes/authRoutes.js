@@ -89,7 +89,7 @@ router.post('/login', async (req, res) => {
         res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
         // Call the dashboard-service
-        const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:3000';
+        const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
         try {
             const response = await axios.get(`${dashboardServiceUrl}/dashboard`);
             console.log('Dashboard response:', response.data);

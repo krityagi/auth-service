@@ -58,22 +58,33 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
     // Perform login logic here...
 
     // Read the dashboard service URL from environment variables
-    const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:3000';
+    const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
 
     // After successful login, make a request to the dashboard-service
     try {
-        const response = await axios.get(`${dashboardServiceUrl}/dashboard`);
-        console.log('Dashboard response:', response.data);
-        res.redirect('/dashboard');
+        const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
+            maxRedirects: 0,
+            validateStatus: function (status) {
+                return status >= 200 && status < 400; // Resolve only if the status code is less than 400
+            }
+        });
+        if (response.status === 302) {
+            res.redirect('/dashboard');
+        } else {
+            console.log('Dashboard response:', response.data);
+            res.redirect('/dashboard');
+        }
     } catch (error) {
         console.error('Error calling dashboard-service:', error);
         res.status(500).send('Internal Server Error');
-    
     }
 });
+
 // Routes
 app.use(authRoutes);
 
