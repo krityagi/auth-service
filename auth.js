@@ -67,8 +67,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', {
+        title: 'Login',
+        message: 'Please log in to continue'
+    });
 });
+
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
