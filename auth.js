@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const axios = require('axios');
 
 dotenv.config();
 
