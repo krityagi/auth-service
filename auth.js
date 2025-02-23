@@ -52,6 +52,15 @@ app.get('/readiness', (req, res) => {
     res.status(200).send('Ready');
 });
 
+// Add cache control headers
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+});
+
 // Add a route to handle GET requests to the root URL
 app.get('/', (req, res) => {
     res.send('Welcome to the Home Page!');
