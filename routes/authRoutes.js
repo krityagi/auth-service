@@ -34,11 +34,11 @@ const loginLimiter = rateLimit({
 });
 
 router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views/login.html'));
+    res.render('login');
 });
 
 router.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views/register.html'));
+    res.render('register');
 });
 
 router.post('/register', async (req, res) => {
@@ -102,8 +102,6 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
-
-
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
