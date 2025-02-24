@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const axios = require('axios');
 
+
 dotenv.config();
 
 const authRoutes = require('./routes/authRoutes').router;
@@ -74,7 +75,7 @@ app.get('/login', (req, res) => {
 });
 
 
-app.post('/login', async (req, res) => {
+/*app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     console.log('Login attempt:', { email }); // Log login attempt
 
@@ -106,7 +107,7 @@ app.post('/login', async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
-});
+});*/
 
 
 // Routes
