@@ -65,10 +65,10 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ email: email.toLowerCase() });
+        const user = await User.findOne({ username: username.toLowerCase() });
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
@@ -79,6 +79,7 @@ router.post('/login', async (req, res) => {
         }
 
         req.session.user = user; // Set user session
+        console.log('Session created:', req.session); // Add logging
         res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
         // Example code to call the dashboard service
@@ -95,6 +96,7 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
+
 
 
 router.get('/logout', (req, res) => {
