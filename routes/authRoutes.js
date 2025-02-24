@@ -65,43 +65,37 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    console.log('Login request received:', req.body);
-
     const { email, password } = req.body;
 
     try {
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
-            console.log('Invalid credentials - user not found');
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            console.log('Invalid credentials - password mismatch');
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        req.session.user = user;
-        console.log('Login successful, redirecting to dashboard');
-
-        // Redirect to the dashboard after successful login
+        req.session.user = user; // Set user session
         res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
-        // Call the dashboard-service
+        // Example code to call the dashboard service
         const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
         try {
-            const response = await axios.get(`${dashboardServiceUrl}/dashboard`);
+            const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
+                headers: { Cookie: req.headers.cookie }
+            });
             console.log('Dashboard response:', response.data);
         } catch (error) {
             console.error('Error calling dashboard-service:', error);
         }
-
     } catch (err) {
-        console.error('Error during login:', err);
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
+
 
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
