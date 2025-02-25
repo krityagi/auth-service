@@ -81,23 +81,34 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        req.session.user = user;
-        console.log('Session created:', req.session);
+        req.session.regenerate((err) => {
+            if (err) {
+                console.error('Session regeneration error:', err);
+                return res.status(500).json({ message: 'Session regeneration error' });
+            }
 
-        // Log session before redirecting
-        console.log('Redirecting to dashboard with session:', req.session);
+            req.session.user = user;
+            req.session.save((err) => {
+                if (err) {
+                    console.error('Session save error:', err);
+                    return res.status(500).json({ message: 'Session save error' });
+                }
 
-        res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
+                console.log('Session saved:', req.session);
 
-        const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
-        try {
-            const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
-                headers: { Cookie: req.headers.cookie }
+                res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
+
+                const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
+                try {
+                    const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
+                        headers: { Cookie: req.headers.cookie }
+                    });
+                    console.log('Dashboard response:', response.data);
+                } catch (error) {
+                    console.error('Error calling dashboard-service:', error);
+                }
             });
-            console.log('Dashboard response:', response.data);
-        } catch (error) {
-            console.error('Error calling dashboard-service:', error);
-        }
+        });
     } catch (err) {
         console.error('Error during login:', err);
         return res.status(500).json({ message: 'Error during login: ' + err.message });
