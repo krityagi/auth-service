@@ -81,14 +81,14 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        req.session.regenerate((err) => {
+        req.session.regenerate(async (err) => {
             if (err) {
                 console.error('Session regeneration error:', err);
                 return res.status(500).json({ message: 'Session regeneration error' });
             }
 
             req.session.user = user;
-            req.session.save((err) => {
+            req.session.save(async (err) => {
                 if (err) {
                     console.error('Session save error:', err);
                     return res.status(500).json({ message: 'Session save error' });
@@ -114,6 +114,7 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
+
 
 
 
