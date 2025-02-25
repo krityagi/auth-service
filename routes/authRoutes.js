@@ -71,19 +71,24 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
+            console.log('User not found:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
+            console.log('Password mismatch for user:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        req.session.user = user; // Set user session
-        console.log('Session created:', req.session); // Add logging
+        req.session.user = user;
+        console.log('Session created:', req.session);
+
+        // Log session before redirecting
+        console.log('Redirecting to dashboard with session:', req.session);
+
         res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
-        // Example code to call the dashboard service
         const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
         try {
             const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
@@ -94,6 +99,7 @@ router.post('/login', async (req, res) => {
             console.error('Error calling dashboard-service:', error);
         }
     } catch (err) {
+        console.error('Error during login:', err);
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
