@@ -118,6 +118,13 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.get('/login', (req, res) => {
+    res.render('login', {
+        title: 'Login',
+        message: 'Please log in to continue'
+    });
+});
+
 
 
 
