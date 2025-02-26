@@ -70,12 +70,6 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Home Page!');
 });
 
-app.get('/login', (req, res) => {
-    res.render('login', {
-        title: 'Login',
-        message: 'Please log in to continue'
-    });
-});
 
 
 /*app.post('/login', async (req, res) => {
