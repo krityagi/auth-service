@@ -98,10 +98,13 @@ router.post('/login', async (req, res) => {
 
                 res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
+                const cookies = req.headers.cookie;
+                console.log('Cookies:', cookies);
+
                 const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
                 try {
                     const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
-                        headers: { Cookie: req.headers.cookie }
+                        headers: { Cookie: cookies || '' }
                     });
                     console.log('Dashboard response:', response.data);
                 } catch (error) {
@@ -114,6 +117,7 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Error during login: ' + err.message });
     }
 });
+
 
 
 
