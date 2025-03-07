@@ -34,7 +34,7 @@ redisClient.on('connect', () => {
 });
 
 redisClient.on('error', (err) => {
-    console.log('Redis client error:', 
+    console.log('Redis client error:');
 });
       
 
