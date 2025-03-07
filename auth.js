@@ -77,7 +77,7 @@ app.use((req, res, next) => {
 
 // Add a route to handle GET requests to the root URL
 app.get('/', (req, res) => {
-    res.send('Welcome to the Home Page!');
+    res.send('Welcome to the DevOpsDuniya Home Page!');
 });
 
 
