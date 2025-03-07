@@ -10,6 +10,7 @@ RUN npm rebuild bcrypt --build-from-source
 
 # Copy app source code
 COPY . .
+RUN apt-get update && apt-get install -y redis-tools
 
 # Expose the port your service runs on
 EXPOSE 4000
