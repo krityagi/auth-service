@@ -8,17 +8,15 @@ image:
 mongoUri: "mongodb://mongo:27017/devopsduniya"
 
 livenessProbe:
-  httpGet:
-    path: /healthz
-    port: 3000
+  path: /healthz
+  port: 3000
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
 
 readinessProbe:
-  httpGet:
-    path: /readiness
-    port: 3000
+  path: /readiness
+  port: 3000
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
