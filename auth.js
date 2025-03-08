@@ -49,7 +49,7 @@ app.use(session({
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { secure: false,
         sameSite: 'Lax',
         domain: 'devopsduniya.in',
@@ -60,6 +60,7 @@ app.use(session({
 
 // Middleware to make user data available in all templates
 app.use((req, res, next) => {
+    console.log('Session in middleware:', req.session);
     res.locals.user = req.session.user; // Make user available in templates
     next();
 });
