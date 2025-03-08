@@ -101,7 +101,7 @@ router.post('/login', async (req, res) => {
                 const cookies = req.headers.cookie;
                 console.log('Cookies:', cookies);
 
-                const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
+                const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:80';
                 try {
                     const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
                         headers: { Cookie: cookies || '' }
