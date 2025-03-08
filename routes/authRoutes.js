@@ -95,6 +95,7 @@ router.post('/login', async (req, res) => {
                 }
 
                 console.log('Session saved:', req.session);
+                console.log('Session ID:', req.sessionID);
 
                 res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
