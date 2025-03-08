@@ -51,7 +51,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false,
-        sameSite: 'Lax'
+        sameSite: 'Lax',
+        domain: 'devopsduniya.in',
+        path: '/'
      },
     logErrors: true
 }));
