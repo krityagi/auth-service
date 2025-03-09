@@ -79,31 +79,41 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    console.log('Response Headers:', res.getHeaders());
+    console.log('Response Headers (initial):', res.getHeaders());
     const { email, password } = req.body;
     console.log('Login attempt:', { email });
 
     try {
+        // Fetch user from MongoDB
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             console.log('User not found:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
+        // Validate password
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
             console.log('Password mismatch for user:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
+        // Regenerate session for security
         req.session.regenerate(async (err) => {
             if (err) {
                 console.error('Session regeneration error:', err);
                 return res.status(500).json({ message: 'Session regeneration error' });
             }
 
-            req.session.user = user;
+            // Save user data to session
+            req.session.user = {
+                email: user.email,
+                name: user.name,
+                role: user.role // Include additional fields if necessary
+            };
             console.log('Session user:', req.session.user);
+
+            // Save session to Redis
             req.session.save(async (err) => {
                 if (err) {
                     console.error('Session save error:', err);
@@ -112,29 +122,35 @@ router.post('/login', async (req, res) => {
 
                 console.log('Session saved:', req.session);
                 console.log('Session ID:', req.sessionID);
-                
+
+                // Debugging: Check session directly from Redis
+                const sessionKey = `sess:${req.sessionID}`;
                 try {
-                    const sessionKey = `sess:${req.sessionID}`;
                     const redisSession = await redisClient.get(sessionKey);
                     console.log('Session in Redis:', redisSession);
                 } catch (redisErr) {
                     console.error('Error fetching session from Redis:', redisErr);
                 }
+
+                // Send response to client with the correct cookie
+                console.log('Response Headers (Set-Cookie):', res.getHeaders()['set-cookie']);
                 res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
-                const cookies = req.headers.cookie || '';
-                console.log('Sending cookies to dashboard-service:', cookies);
+                // Forward the session cookie to dashboard-service
+                const connectSidCookie = res.getHeaders()['set-cookie'].find((cookie) =>
+                    cookie.startsWith('connect.sid')
+                );
+                console.log('Forwarding cookie to dashboard-service:', connectSidCookie);
 
                 const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:80';
                 try {
                     const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
-                        headers: { Cookie: cookies }
+                        headers: { Cookie: connectSidCookie }
                     });
                     console.log('Dashboard response:', response.data);
-                } catch (error) {
-                    console.error('Error calling dashboard-service:', error);
+                } catch (axiosErr) {
+                    console.error('Error calling dashboard-service:', axiosErr);
                 }
-
             });
         });
     } catch (err) {
