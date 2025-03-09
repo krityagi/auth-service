@@ -122,25 +122,12 @@ router.post('/login', async (req, res) => {
 
                 console.log('Session saved:', req.session);
                 console.log('Session ID:', req.sessionID);
-                //res.redirect('/dashboard');
-
-                // Debugging: Check session directly from Redis
-                const sessionKey = `sess:${req.sessionID}`;
-                try {
-                    const redisSession = await redisClient.get(sessionKey);
-                    console.log('Session in Redis:', redisSession);
-                } catch (redisErr) {
-                    console.error('Error fetching session from Redis:', redisErr);
-                }
 
                 // Send response to client with the correct cookie
-                console.log('Response Headers (Set-Cookie):', res.getHeaders()['set-cookie']);
                 res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
                 // Forward the session cookie to dashboard-service
-                const connectSidCookie = res.getHeaders()['set-cookie'].find((cookie) =>
-                    cookie.startsWith('connect.sid')
-                );
+                const connectSidCookie = req.headers.cookie;
                 console.log('Forwarding cookie to dashboard-service:', connectSidCookie);
 
                 const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:80';
