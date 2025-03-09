@@ -52,8 +52,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false,
         sameSite: 'Lax',
-        domain: 'devopsduniya.in',
-        path: '/'
+        domain: 'devopsduniya.in'
      },
     logErrors: true
 }));
@@ -88,42 +87,6 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
-
-
-
-/*app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    console.log('Login attempt:', { email }); // Log login attempt
-
-    try {
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        req.session.user = user; // Set user session
-        console.log('Session created:', req.session); // Log session creation
-        res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
-
-        // After successful login, make a request to the dashboard-service
-        const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service-internal:3000';
-        try {
-            const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
-                headers: { Cookie: req.headers.cookie }
-            });
-            console.log('Dashboard response:', response.data);
-        } catch (error) {
-            console.error('Error calling dashboard-service:', error);
-        }
-    } catch (err) {
-        return res.status(500).json({ message: 'Error during login: ' + err.message });
-    }
-});*/
 
 
 // Routes
