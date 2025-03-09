@@ -60,11 +60,15 @@ app.use(session({
 
 // Middleware to make user data available in all templates
 app.use((req, res, next) => {
-    console.log('Session in middleware:', req.session);
-    res.locals.user = req.session.user; // Make user available in templates
+    if (!req.session) {
+        console.error('Session is undefined. Ensure session middleware is initialized.');
+    } else if (!req.session.user) {
+        console.warn('Session exists, but user is not set. Ensure authentication logic is working.');
+    } else {
+        console.log('Session user:', req.session.user);
+    }
     next();
 });
-
 // Health check endpoint
 app.get('/healthz', (req, res) => {
     res.status(200).send('OK');
