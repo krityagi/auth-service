@@ -95,7 +95,7 @@ router.post('/login', async (req, res) => {
                 }
 
                 console.log('Session saved:', req.session);
-                console.log('Session ID:', req.sessionID);
+                //console.log('Session ID:', req.sessionID);
                 res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
                 const cookies = req.headers.cookie;
@@ -119,12 +119,12 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/login', (req, res) => {
+/*router.get('/login', (req, res) => {
     res.render('login', {
         title: 'Login',
         message: 'Please log in to continue'
     });
-});
+});*/
 
 
 
