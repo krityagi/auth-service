@@ -122,6 +122,7 @@ router.post('/login', async (req, res) => {
 
                 console.log('Session saved:', req.session);
                 console.log('Session ID:', req.sessionID);
+                res.redirect('/dashboard');
 
                 // Debugging: Check session directly from Redis
                 const sessionKey = `sess:${req.sessionID}`;
