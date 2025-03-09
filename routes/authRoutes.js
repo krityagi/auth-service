@@ -98,6 +98,13 @@ router.post('/login', async (req, res) => {
 
                 console.log('Session saved:', req.session);
                 console.log('Session ID:', req.sessionID);
+                try {
+                    const sessionKey = `sess:${req.sessionID}`;
+                    const redisSession = await redisClient.get(sessionKey);
+                    console.log('Session in Redis:', redisSession);
+                } catch (redisErr) {
+                    console.error('Error fetching session from Redis:', redisErr);
+                }
                 res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
 
                 const cookies = req.headers.cookie || '';
