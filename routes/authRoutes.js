@@ -89,6 +89,7 @@ router.post('/login', async (req, res) => {
             }
 
             req.session.user = user;
+            console.log('Session user:', req.session.user);
             req.session.save(async (err) => {
                 if (err) {
                     console.error('Session save error:', err);
