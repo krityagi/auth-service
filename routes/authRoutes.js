@@ -27,6 +27,20 @@ function isAuthenticated(req, res, next) {
     }
 }
 
+const redis = require('redis');
+const redisClient = redis.createClient({
+    host: process.env.REDIS_HOST || 'redis-service',
+    port: process.env.REDIS_PORT || 6379
+});
+
+redisClient.on('connect', () => {
+    console.log('Redis client connected');
+});
+
+redisClient.on('error', (err) => {
+    console.log('Redis client error:');
+});
+
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,
@@ -98,6 +112,7 @@ router.post('/login', async (req, res) => {
 
                 console.log('Session saved:', req.session);
                 console.log('Session ID:', req.sessionID);
+                
                 try {
                     const sessionKey = `sess:${req.sessionID}`;
                     const redisSession = await redisClient.get(sessionKey);
