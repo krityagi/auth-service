@@ -13,6 +13,15 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes').router;
 
 const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
 const port = process.env.PORT || 3000;
 console.log('DB_USERNAME:', process.env.DB_USERNAME);
 console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
