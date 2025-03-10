@@ -37,7 +37,12 @@ const redisClient = redis.createClient({
     host: process.env.REDIS_HOST || 'redis-service',
     port: process.env.REDIS_PORT || 6379,
     retry_strategy: function(options) {
-        console.log('Redis retry attempt:', options.attempt);
+        if (options.error && options.error.code === 'ECONNREFUSED') {
+            return new Error('The server refused the connection');
+        }
+        if (options.total_retry_time > 1000 * 60 * 60) {
+            return new Error('Retry time exhausted');
+        }
         return Math.min(options.attempt * 100, 3000);
     }
 });
@@ -54,7 +59,7 @@ app.use(session({
     store: new RedisStore({ 
         client: redisClient,
         prefix: 'sess:',
-        ttl: 86400 // 24 hours
+        ttl: 86400
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -65,8 +70,7 @@ app.use(session({
         httpOnly: true,
         sameSite: 'Lax',
         domain: 'devopsduniya.in',
-        path: '/',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        path: '/'
     }
 }));
 
