@@ -102,65 +102,37 @@ router.post('/login', async (req, res) => {
         req.session.regenerate(async (err) => {
             if (err) {
                 console.error('Session regeneration error:', err);
-                return res.status(500).json({ message: 'Session regeneration error' });
+                return res.status(500).json({ message: 'Session error' });
             }
 
-            // Save user data to session
             req.session.user = {
                 email: user.email,
                 name: user.name,
-                role: user.role // Include additional fields if necessary
+                role: user.role
             };
-            console.log('Session user:', req.session.user);
 
-            // Save session to Redis
-            req.session.save(async (err) => {
-                if (err) {
-                    console.error('Session save error:', err);
-                    return res.status(500).json({ message: 'Session save error' });
-                }
+            await new Promise((resolve, reject) => {
+                req.session.save((err) => {
+                    if (err) reject(err);
+                    resolve();
+                });
+            });
 
-                console.log('Session saved:', req.session);
-                console.log('Session ID:', req.sessionID);
-                //res.redirect('/dashboard');
+            console.log('Session saved:', {
+                id: req.sessionID,
+                user: req.session.user
+            });
 
-                // Debugging: Check session directly from Redis
-                const sessionKey = `sess:${req.sessionID}`;
-                try {
-                    const redisSession = await redisClient.get(sessionKey);
-                    console.log('Session in Redis:', redisSession);
-                } catch (redisErr) {
-                    console.error('Error fetching session from Redis:', redisErr);
-                }
-
-                // Send response to client with the correct cookie
-                console.log('Response Headers (Set-Cookie):', res.getHeaders()['set-cookie']);
-                res.status(200).json({ message: 'Login successful', redirectUrl: '/dashboard' });
-
-                // Forward the session cookie to dashboard-service
-                const connectSidCookie = res.getHeaders()['set-cookie'].find((cookie) =>
-                    cookie.startsWith('connect.sid')
-                );
-                console.log('Forwarding cookie to dashboard-service:', connectSidCookie);
-
-                const dashboardServiceUrl = process.env.DASHBOARD_SERVICE_URL || 'http://dashboard-service:80';
-                try {
-                    const response = await axios.get(`${dashboardServiceUrl}/dashboard`, {
-                        headers: { Cookie: connectSidCookie }
-                    });
-                    console.log('Dashboard response:', response.data);
-                } catch (axiosErr) {
-                    console.error('Error calling dashboard-service:', axiosErr);
-                }
+            res.status(200).json({ 
+                message: 'Login successful',
+                redirectUrl: '/dashboard'
             });
         });
     } catch (err) {
-        console.error('Error during login:', err);
-        return res.status(500).json({ message: 'Error during login: ' + err.message });
+        console.error('Login error:', err);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-
 /*router.get('/login', (req, res) => {
     res.render('login', {
         title: 'Login',
