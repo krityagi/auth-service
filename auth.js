@@ -26,7 +26,11 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const redisClient = redis.createClient({
     host: process.env.REDIS_HOST || 'redis-service',
-    port: process.env.REDIS_PORT || 6379
+    port: process.env.REDIS_PORT || 6379,
+    retry_strategy: function(options) {
+        console.log('Redis retry attempt:', options.attempt);
+        return Math.min(options.attempt * 100, 3000);
+    }
 });
 
 redisClient.on('connect', () => {
@@ -34,40 +38,55 @@ redisClient.on('connect', () => {
 });
 
 redisClient.on('error', (err) => {
-    console.log('Redis client error:');
+    console.error('Redis client error:', err);
 });
-      
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ 
+        client: redisClient,
+        prefix: 'sess:',
+        ttl: 86400 // 24 hours
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false,
+    name: 'connect.sid',
+    cookie: { 
+        secure: false,
+        httpOnly: true,
         sameSite: 'Lax',
-        domain: 'devopsduniya.in'
-     },
-    logErrors: true
+        domain: 'devopsduniya.in',
+        path: '/',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
 
-// Middleware to make user data available in all templates
+// Updated session middleware
 app.use((req, res, next) => {
+    console.log('Session middleware:', {
+        hasSession: !!req.session,
+        sessionID: req.sessionID,
+        cookie: req.session ? req.session.cookie : null,
+        user: req.session ? req.session.user : null
+    });
+
     if (!req.session) {
         console.error('Session is undefined. Ensure session middleware is initialized.');
     } else if (!req.session.user) {
-        console.warn('Session exists, but user is not set. Ensure authentication logic is working.');
+        console.warn('Session exists, but user is not set.');
     } else {
         console.log('Session user:', req.session.user);
     }
     next();
+});
+
+// Add explicit error handling for session store
+app.use((err, req, res, next) => {
+    console.error('Session error:', err);
+    if (err.code === 'ECONNREFUSED') {
+        console.error('Redis connection refused');
+    }
+    next(err);
 });
 // Health check endpoint
 app.get('/healthz', (req, res) => {
